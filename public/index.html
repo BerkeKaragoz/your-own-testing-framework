@@ -4,28 +4,8 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script type="text/javascript" src="./reload.js"></script>
     <title>Document</title>
-    <script type="text/javascript">
-      function WebSocketTest() {
-        if ("WebSocket" in window) {
-          var ws = new WebSocket("ws://localhost:30000");
-
-          ws.onmessage = function (evt) {
-            console.info(evt);
-            window.location.reload();
-          };
-
-          ws.onclose = function (e) {
-            console.error("Socket is closed. Retrying in 5 seconds.", e.reason);
-            setTimeout(function () {
-              WebSocketTest();
-            }, 5000);
-          };
-        } else console.error("Cannot open WebSocket");
-      }
-
-      WebSocketTest();
-    </script>
   </head>
   <body>
     <span id="title">index.html</span>

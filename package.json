@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./index.ts",
+    "start": "nodemon src",
     "serve": "http-server ./public -p 3000",
-    "watch": "nodemon ./watch-files.js",
+    "watch": "nodemon ./scripts/watch-files.js",
     "dev": "concurrently \"npm:serve\" \"npm:watch\" \"npm:start\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
