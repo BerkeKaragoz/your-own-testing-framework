@@ -1,6 +1,6 @@
-import fs from "fs";
-import path from "path";
-import { WebSocketServer } from "ws";
+const fs = require("fs");
+const path = require("path");
+const WebSocketServer = require("ws").WebSocketServer;
 
 const PUBLIC_DIR = "./public";
 

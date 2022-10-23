@@ -1,11 +1,14 @@
-import fetch from "node-fetch";
-
 const BASE_URL = "http://localhost:3000";
 
 const main = async () => {
-  const contents = await fetch(BASE_URL).then((res) => res.text());
+  const { JSDOM } = await import("jsdom");
+  const {
+    window: { document },
+  } = await JSDOM.fromURL(BASE_URL);
 
-  console.log(contents);
+  const titleEl = document.querySelector("#title");
+
+  console.log("title", titleEl.textContent);
 };
 
 main();
