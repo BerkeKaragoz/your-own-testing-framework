@@ -10,7 +10,7 @@ In summary:
 - Assertion (node:assert, chai...)
 - Adding features such as reporting/presentation (mocha, chai, latte, sugar?)
 
-See how simple it can get in this example repository: https://github.com/BerkeKaragoz/your-own-testing-framework
+See how simple it can get in this example repository: [BerkeKaragoz/your-own-testing-framework](https://github.com/BerkeKaragoz/your-own-testing-framework)
 
 ## The environment
 As long as you can do all the items listed above, you can go on with that environment.
@@ -35,6 +35,7 @@ A simple one would be:
 import fs from 'fs'
 import path from 'path'
 const DIR = './src'
+
 // Read all files in ./src and get the text contents
 export default fs.readdirSync(DIR).map(name => { 
 const path = path.resolve(DIR, pathname)
@@ -50,7 +51,20 @@ Or if you are doing black-box testing, you can setup a `json` file and setup the
 ## Generate the DOM
 Since we don't want to deal with string search, we are going to parse the text contents to an object that represents DOM. `jsdom` does a good job generating a `window` object. In the perfect world, we would like to test exactly what the program outputs. So having a `window` object helps.
 
-But lets say we are using `libxml2`, just cuz (or some valid purpose). There would be an XML tree that you can get the data stored in the HTML. But you wouldn't have interactivity. That might be okay for you, in the end it is your own testing framework. But this is why this step is important. You can parse with anything, however that isn't enough for complete testing. If you want to add interactivity, you can pass it to a JavaScript engine.
+But lets say we are using `libxml2`, just cuz (or some valid purpose). There would be an XML tree that you can get the data stored in the HTML.
+
+```c
+//parse the file and get the DOM 
+xmlDoc *doc = NULL;
+xmlNode *root_element = NULL;
+xmlNode *body_node = NULL;
+
+doc = xmlReadFile(file, NULL, 0);
+root_element = xmlDocGetRootElement(doc);
+body_node = findNodeByName(current_node, (xmlChar*) "body");
+```
+
+But you wouldn't have interactivity. That might be okay for you, in the end it is your own testing framework. But this is why this step is important. You can parse with anything, however that isn't enough for complete testing. If you want to add interactivity, you can pass it to a JavaScript engine.
 
 Or render with WebView2 then inject some scripts? Do what you want!
 
@@ -59,12 +73,26 @@ There are certain ways of accessing data from DOM. The simplest way of selecting
 
 Okay, but there are more to selecting elements. This can be the most painful part of writing tests, especially on end to end testing. Therefore you can develop some systems to make it easier to select elements on your framework.
 
-Let's get back to the `libxml2` example. You can select the nodes with XPath and get the data from there. There are browsers support copying the elements selector as XPath. So when the developer is writing tests, it wouldn't be much of a hassle.
+Let's get back to the `libxml2` example. You can select the nodes with [XPath](https://www.w3.org/TR/1999/REC-xpath-19991116/#section-Introduction) ([source](https://github.com/GNOME/libxml2/blob/master/xpath.c)) and get the data from there. There are browsers support copying the elements selector as XPath. So when the developer is writing tests, it wouldn't be much of a hassle.
+
+```c
+xmlXPathContextPtr xpathCtx;
+xmlXPathObjectPtr xpathObj; 
+
+// Create xpath evaluation context
+xpathCtx = xmlXPathNewContext(doc);
+
+// xpathExpr => xmlChar* lets say it's: //*[@id="contact"]/div/a
+xpathObj = xmlXPathEvalExpression(xpathExpr, xpathCtx);
+
+// xpathObj->nodesetval is an instance of xmlNodeSetPtr
+// which is what you need
+```
 
 ## Assertion
 You can pretty much say `if equals to this, do this, else do this` but you won't have much control over the checks being made in the tests. By using assertions, you can generate test outputs better. If you make your own assert function, you can bind it to callbacks and make a flow so that your framework can track what is happening.
 
-Not just that, but you can provide good functionality with preparing those functions. There are libaries for assertions such as `Chai.js`.
+Not just that, but you can provide good functionality with preparing those functions. There are libaries for assertions such as [Chai.js](https://www.chaijs.com/).
 
 ## Additions
 If there isn't any additional features that your framework can do beside what we have talked about, then it wouldn't be that interesting isn't it? You decide what it does. Maybe mail all test reports to `test-reports@berkekaragoz.com`?
